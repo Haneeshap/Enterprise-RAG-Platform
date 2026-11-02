@@ -1,0 +1,76 @@
+{
+  "title": "Frontend TTFB Streaming",
+  "type": "dashboard",
+  "tags": ["frontend", "ttfb", "streaming"],
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "type": "histogram",
+      "title": "Time to First Token Distribution",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "time_to_first_token_seconds_bucket",
+          "legendFormat": "ttfb"
+        }
+      ],
+      "gridPos": {"x": 0, "y": 0, "w": 12, "h": 6}
+    },
+    {
+      "type": "stat",
+      "title": "TTFB P50",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(time_to_first_token_seconds_bucket[5m])) by (le)",
+          "legendFormat": "p50_ttfb"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "TTFB P95",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(time_to_first_token_seconds[5m])) by (le)",
+          "legendFormat": "p95_ttfb"
+        }
+      ],
+      "thresholds": {
+        "mode": "absolute",
+        "color": "green",
+        "value": 400
+      }
+    },
+    {
+      "type": "stat",
+      "title": "TTFB P99",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(time_to_first_token_seconds[5m])) by (le)",
+          "legendFormat": "p99_ttfb"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "TTFB vs Cache Hit",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "time_to_first_token_seconds_count{cache_hit=\"false\"} by (instance)",
+          "legendFormat": "miss_ttfb"
+        },
+        {
+          "expr": "time_to_first_token_seconds_count{cache_hit=\"true\"} by (instance)",
+          "legendFormat": "hit_ttfb"
+        }
+      ]
+    }
+  ]
+}
