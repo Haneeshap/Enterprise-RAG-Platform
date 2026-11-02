@@ -1,0 +1,76 @@
+{
+  "title": "RAG Chaos",
+  "type": "dashboard",
+  "tags": ["rag", "chaos", "resilience"],
+  "time": {
+    "from": "now-2h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Pod Restarts",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(container_pod_restarts_total{app=rag-platform}[5m])",
+          "legendFormat": "restarts_per_min"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Error Rate During Chaos",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total{app=rag-platform, status=~5..}[5m])",
+          "legendFormat": "error_rate"
+        }
+      ],
+      "thresholds": {
+        "mode": "absolute",
+        "color": "red",
+        "value": 0.05
+      }
+    },
+    {
+      "type": "stat",
+      "title": "MTTR 5min",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "increase(pod_restarts_total{app=rag-platform}[5m])",
+          "legendFormat": "restarts"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Blast Radius",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "count by (namespace) (pods{app=rag-platform})",
+          "legendFormat": "affected_namespaces"
+        }
+      ],
+      "thresholds": {
+        "mode": "absolute",
+        "color": "red",
+        "value": 1
+      }
+    },
+    {
+      "type": "graph",
+      "title": "Recovery Time",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(pod_restarts_total{app=rag-platform, reason=Scheduled}[1m])",
+          "legendFormat": "scheduled_restarts"
+        }
+      ]
+    }
+  ]
+}

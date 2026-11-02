@@ -1,0 +1,241 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: rag-platform-hpa
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: rag-platform
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 20
+        periodSeconds: 60
+      - type: Pods
+        value: 2
+        periodSeconds: 60
+---
+apiVersion: v1
+kind: PodDisruptionBudget
+metadata:
+  name: rag-platform-pdb
+  namespace: default
+spec:
+  minAvailable: 1
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: rag-platform
+---
+apiVersion: k8s.technologies/v1
+kind: ChaosExperiment
+metadata:
+  name: pod-kill-experiment
+  namespace: default
+spec:
+  target:
+    mode: All
+    selector:
+      matchLabels:
+        app: rag-platform
+  chaos:
+    type: pod-kill
+    duration: 30s
+    rate: 20%
+  # Verify MTTR 5min, blast radius 1
+---
+apiVersion: k8s.technologies/v1
+kind: ChaosExperiment
+metadata:
+  name: network-latency-experiment
+  namespace: default
+spec:
+  target:
+    mode: All
+    selector:
+      matchLabels:
+        app: rag-platform
+  chaos:
+    type: network-latency
+    duration: 60s
+    latency: 100ms
+    loss: 0%
+  # Verify MTTR 5min, blast radius 1
+---
+apiVersion: k8s.technologies/v1
+kind: ChaosExperiment
+metadata:
+  name: cpu-stress-experiment
+  namespace: default
+spec:
+  target:
+    mode: All
+    selector:
+      matchLabels:
+        app: rag-platform
+  chaos:
+    type: cpu-stress
+    duration: 120s
+    cpu: 80
+  # Verify MTTR 5min, blast radius 1
+---
+apiVersion:tekton.dev/v1beta1
+kind:Pipeline
+metadata:
+  name: chaos-pipeline
+  namespace: default
+spec:
+  tasks:
+  - name: pod-kill
+    taskSpec:
+      steps:
+      - name: execute-chaos
+        template: chaos-experiment
+---
+apiVersion:kaas.k8s.io/v1beta1
+kind:ClusterStatus
+metadata:
+  name: rag-platform
+spec:
+  monitoring:
+    enabled: true
+    # HPA based on Prometheus metric http_request_duration_seconds p95
+    metrics:
+      - name: request_latency_seconds_p95
+        query: |
+          histogram_quantile(0.95, sum(rate(vector(request_latency_seconds_seconds_bucket){job="rag-platform"}[5m])) by (le))
+        target: 400
+        behavior:
+          scaleUp: true
+          scaleDown: true
+---
+<parameter>new_text>
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: rag-platform-hpa
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: rag-platform
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Object
+    object:
+      metric:
+        name: request_latency_seconds_p95
+      target:
+        type: AverageValue
+        averageValue: 400
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 20
+        periodSeconds: 60
+      - type: Pods
+        value: 2
+        periodSeconds: 60
+---
+apiVersion: v1
+kind: PodDisruptionBudget
+metadata:
+  name: rag-platform-pdb
+  namespace: default
+spec:
+  minAvailable: 1
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: rag-platform
+---
+apiVersion: k8s.technologies/v1
+kind: ChaosExperiment
+metadata:
+  name: pod-kill-experiment
+  namespace: default
+spec:
+  target:
+    mode: All
+    selector:
+      matchLabels:
+        app: rag-platform
+  chaos:
+    type: pod-kill
+    duration: 30s
+    rate: 20%
+---
+apiVersion: k8s.technologies/v1
+kind: ChaosExperiment
+metadata:
+  name: network-latency-experiment
+  namespace: default
+spec:
+  target:
+    mode: All
+    selector:
+      matchLabels:
+        app: rag-platform
+  chaos:
+    type: network-latency
+    duration: 60s
+    latency: 100ms
+    loss: 0%
+---
+apiVersion: k8s.technologies/v1
+kind: ChaosExperiment
+metadata:
+  name: cpu-stress-experiment
+  namespace: default
+spec:
+  target:
+    mode: All
+    selector:
+      matchLabels:
+        app: rag-platform
+  chaos:
+    type: cpu-stress
+    duration: 120s
+    cpu: 80
+---
+apiVersion:tekton.dev/v1beta1
+kind:Pipeline
+metadata:
+  name: chaos-pipeline
+  namespace: default
+spec:
+  tasks:
+  - name: pod-kill
+    taskSpec:
+      steps:
+      - name: execute-chaos
+        template: chaos-experiment

@@ -1,0 +1,72 @@
+{
+  "title": "RAG HPA",
+  "type": "dashboard",
+  "tags": ["rag", "hpa", "scaling"],
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Replica Count",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "count(kube_pod_status_ready{app=rag-platform})",
+          "legendFormat": "replicas"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "HPA Scaling Activity",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "count(kube_hpa_status_current_replicas{app=rag-platform})",
+          "legendFormat": "current_replicas"
+        },
+        {
+          "expr": "count(kube_hpa_status_desired_replicas{app=rag-platform})",
+          "legendFormat": "desired_replicas"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "p95 Latency vs Replicas",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "request_latency_seconds_p95",
+          "legendFormat": "p95_latency"
+        },
+        {
+          "expr": "count(kube_pod_status_ready{app=rag-platform})",
+          "legendFormat": "replicas"
+        }
+      ],
+      "yaxes": [
+        {"format": "ms", "label": "Latency"},
+        {"format": "short", "label": "Replicas"}
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "p95 Target",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": 400,
+          "legendFormat": "p95 target"
+        }
+      ],
+      "thresholds": {
+        "mode": "absolute",
+        "color": "green",
+        "value": 400
+      }
+    }
+  ]
+}
