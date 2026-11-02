@@ -1,0 +1,88 @@
+{
+  "title": "Cost per 1k Queries",
+  "type": "dashboard",
+  "tags": ["cost", "billing"],
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "type": "time_series",
+      "title": "Cost per 1k Queries Trend",
+      "datasource": "Prometheus",
+      "targets": [
+        {"expr": "cost_per_1k_queries", "legendFormat": "cost_per_1k"}
+      ],
+      "gridPos": {"x": 0, "y": 0, "w": 12, "h": 6}
+    },
+    {
+      "type": "graph",
+      "title": "Cost Breakdown (Embedding vs LLM vs Reranker)",
+      "datasource": "Prometheus",
+      "targets": [
+        {"expr": "cost_breakdown_embedding", "legendFormat": "embedding"},
+        {"expr": "cost_breakdown_llm", "legendFormat": "llm"},
+        {"expr": "cost_breakdown_reranker", "legendFormat": "reranker"}
+      ],
+      "gridPos": {"x": 12, "y": 0, "w": 12, "h": 6}
+    },
+    {
+      "type": "graph",
+      "title": "Cache Hit Rate vs Cost per 1k",
+      "datasource": "Prometheus",
+      "targets": [
+        {"expr": "cache_hit_rate", "legendFormat": "cache_hit_rate"},
+        {"expr": "cost_per_1k_queries", "legendFormat": "cost_per_1k"}
+      ],
+      "yaxes": [
+        {"format": "percent", "label": "Cache Hit Rate"},
+        {"format": "currency", "label": "Cost per 1k"}
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Cost Cut %",
+      "datasource": "Prometheus",
+      "targets": [
+        {"expr": "cost_cut_percent", "legendFormat": "cost_cut"}
+      ],
+      "thresholds": {
+        "mode": "absolute",
+        "color": "green",
+        "value": 60
+      }
+    },
+    {
+      "type": "graph",
+      "title": "Cost per Tenant",
+      "datasource": "Prometheus",
+      "targets": [
+        {"expr": "sum by (tenant_id) (cost_per_1k_queries)", "legendFormat": "{{tenant_id}}"}
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Total Cost vs Queries",
+      "datasource": "Prometheus",
+      "targets": [
+        {"expr": "sum(rate(cost_saved_total[5m])) by (tenant_id)",
+        "legendFormat": "cost_saved"}
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Anomaly Detection",
+      "datasource": "Prometheus",
+      "targets": [
+        {"expr": "abs(cost_per_1k_queries - avg(cost_per_1k_queries[24h])) / avg(cost_per_1k_queries[24h]) > 2",
+        "legendFormat": "anomaly_detected"}
+      ],
+      "thresholds": {
+        "mode": "absolute",
+        "color": "red",
+        "value": 2
+      }
+    }
+  ]
+}
