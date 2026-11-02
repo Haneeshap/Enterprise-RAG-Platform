@@ -1,0 +1,6 @@
+{
+  "expectation_type": "expect_column_values_to_be_unique",
+  "kwargs": {
+    "column_list": ["tenant_id", "doc_id", "chunk_id"]
+  }
+}

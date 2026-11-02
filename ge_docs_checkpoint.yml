@@ -1,0 +1,10 @@
+name: docs_checkpoint
+config_version: 1.0
+validations:
+  - name: docs_validation
+    expectation_suite_name: docs_suite
+    batch_request:
+      define_changelog: false
+      datasource_name: postgres_ds
+      data_connector_name: default_rw_connector_name
+      dataset_name: public.docs

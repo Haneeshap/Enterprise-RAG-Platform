@@ -1,0 +1,31 @@
+{
+  "title": "Data Quality",
+  "type": "dashboard",
+  "tags": ["data-quality"],
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Null Embedding Total",
+      "datasource": "Prometheus",
+      "targets": [{"expr": "null_embedding_total", "legendFormat": "null_embeddings"}]
+    },
+    {
+      "type": "stat",
+      "title": "Embedding Coverage %",
+      "datasource": "Prometheus",
+      "targets": [{"expr": "embedding_coverage_gauge", "legendFormat": "coverage"}]
+    },
+    {
+      "type": "stat",
+      "title": "GE Success %",
+      "datasource": "Prometheus",
+      "targets": [{"expr": "ge_success_percent", "legendFormat": "ge_success"}]
+    },
+    {
+      "type": "stat",
+      "title": "DBT Test Pass Rate",
+      "datasource": "Prometheus",
+      "targets": [{"expr": "dbt_test_pass_rate", "legendFormat": "dbt_pass"}]
+    }
+  ]
+}

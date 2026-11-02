@@ -1,0 +1,28 @@
+{
+  "title": "Kafka Lag DLQ",
+  "type": "dashboard",
+  "tags": ["kafka", "dlq"],
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Kafka Consumer Lag",
+      "datasource": "Prometheus",
+      "targets": [{"expr": "kafka_consumer_lag", "legendFormat": "consumer_lag"}]
+    },
+    {
+      "type": "stat",
+      "title": "DLQ Count",
+      "datasource": "Prometheus",
+      "targets": [{"expr": "dlq_count", "legendFormat": "dlq"}]
+    },
+    {
+      "type": "graph",
+      "title": "Ingest Rate",
+      "datasource": "Prometheus",
+      "targets": [
+        {"expr": "rate(kafka_consumer_total[1m])", "legendFormat": "consumer_rate"},
+        {"expr": "rate(kafka_producer_total[1m])", "legendFormat": "producer_rate"}
+      ]
+    }
+  ]
+}

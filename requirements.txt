@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+pydantic
+python-jose
+passlib
+psycopg2-binary
+pgvector
+redis
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-exporter-jaeger
+prometheus-client
+tiktoken
+python-dotenv
+pytest
+httpx

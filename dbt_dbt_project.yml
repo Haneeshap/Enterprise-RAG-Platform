@@ -1,0 +1,9 @@
+name: enterprise_rag
+profile: postgres
+model-path: "models"
+target: dev
+models:
+  staging:
+    +materialized: view
+  marts:
+    +materialized: table

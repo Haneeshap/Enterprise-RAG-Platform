@@ -1,0 +1,13 @@
+version: 2
+default:
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      port: 5432
+      dbname: rag
+      user: rag
+      password: rag
+      schema: public
+      threads: 4
+  target: dev
