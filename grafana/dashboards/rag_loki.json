@@ -1,0 +1,43 @@
+{
+  "title": "RAG Loki Logs",
+  "type": "dashboard",
+  "tags": ["rag", "loki", "logs"],
+  "panels": [
+    {
+      "type": "log",
+      "title": "Application Logs",
+      "datasource": "Loki",
+      "targets": [{"expr": '{service="rag-platform"}'}]
+    },
+    {
+      "type": "log",
+      "title": "Error Logs",
+      "datasource": "Loki",
+      "targets": [{"expr": '{service="rag-platform", level="error"}'}]
+    },
+    {
+      "type": "stat",
+      "title": "Log Volume per Minute",
+      "datasource": "Loki",
+      "targets": [{"expr": "rate({service=\"rag-platform\"}[1m])"}]
+    },
+    {
+      "type": "graph",
+      "title": "Logs by Correlation ID",
+      "datasource": "Loki",
+      "targets": [{"expr": '{correlation_id!=""}'}]
+    },
+    {
+      "type": "graph",
+      "title": "Logs by Trace ID",
+      "datasource": "Loki",
+      "targets": [{"expr': '{trace_id!=""}'}]
+    },
+    {
+      "type": "graph",
+      "title": "Logs by Tenant ID",
+      "datasource": "Loki",
+      "targets": [{"expr": '{tenant_id!=""}'}]
+    }
+  ]
+}

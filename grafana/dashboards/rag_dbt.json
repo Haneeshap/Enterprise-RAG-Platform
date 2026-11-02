@@ -1,0 +1,11 @@
+{
+  "title": "RAG DBT",
+  "type": "dashboard",
+  "tags": ["rag", "dbt"],
+  "panels": [
+    {"type": "stat", "title": "DBT Models Compiled", "datasource": "Prometheus", "targets": [{"expr": "dbt_models_compiled_total", "legendFormat": "compiled"}]},
+    {"type": "graph", "title": "DBT Test Pass Rate", "datasource": "Prometheus", "targets": [{"expr": "dbt_test_pass_rate", "legendFormat": "pass_rate"}]},
+    {"type": "graph", "title": "DBT Runtime", "datasource": "Prometheus", "targets": [{"expr": "dbt_runtime_seconds"}]},
+    {"type": "stat", "title": "DBT Rows Transformed", "datasource": "Prometheus", "targets": [{"expr": "dbt_rows_transformed_total"}]})
+  ]
+}

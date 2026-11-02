@@ -1,0 +1,39 @@
+{
+  "title": "RAG SLO",
+  "type": "dashboard",
+  "tags": ["rag", "slo", "reliability"],
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Error Budget Remaining",
+      "datasource": "Prometheus",
+      "targets": [{"expr": "100 - (rate(error_budget_consumed[1m]) * 100)", "legendFormat": "error_budget"}]
+    },
+    {
+      "type": "graph",
+      "title": "Latency P95 (Target: <500ms)",
+      "datasource": "Prometheus",
+      "targets": [{"expr": "request_latency_seconds_p95", "legendFormat": "p95_latency"}],
+      "thresholds": {"mode": "absolute", "color": "green", "value": 500}
+    },
+    {
+      "type": "stat",
+      "title": "Availability (Target: 99.9%)",
+      "datasource": "Prometheus",
+      "targets": [{"expr": "request_success_rate", "legendFormat": "availability"}],
+      "thresholds": {"mode": "absolute", "color": "green", "value": 99.9}
+    },
+    {
+      "type": "graph",
+      "title": "Throughput",
+      "datasource": "Prometheus",
+      "targets": [{"expr": "rate(requests_total[1m])", "legendFormat": "req_per_sec"}]
+    },
+    {
+      "type": "stat",
+      "title": "Error Budget Burn Rate",
+      "datasource": "Prometheus",
+      "targets": [{"expr": "rate(error_budget_consumed[1m])", "legendFormat": "burn_rate"}]
+    }
+  ]
+}

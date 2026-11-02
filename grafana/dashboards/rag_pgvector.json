@@ -1,0 +1,11 @@
+{
+  "title": "RPG Vector",
+  "type": "dashboard",
+  "tags": ["rag", "pgvector"],
+  "panels": [
+    {"type": "stat", "title": "Vector Index Size", "datasource": "Prometheus", "targets": [{"expr": "vector_index_size"}]},
+    {"type": "graph", "title": "Vector Search Latency", "datasource": "Prometheus", "targets": [{"expr": "pgvector_search_duration_seconds_bucket"}]},
+    {"type": "stat", "title": "Docs in Index", "datasource": "Prometheus", "targets": [{"expr": "doc_vector_count"}]},
+    {"type": "graph", "title": "HNSW M/EF", "datasource": "Prometheus", "targets": [{"expr": "hnsw_m", "legendFormat": "m"}, {"expr": "hnsw_ef", "legendFormat": "ef"}])}
+  ]
+}

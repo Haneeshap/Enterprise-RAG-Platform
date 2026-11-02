@@ -1,0 +1,11 @@
+{
+  "title": "RAG Kafka",
+  "type": "dashboard",
+  "tags": ["rag", "kafka"],
+  "panels": [
+    {"type": "stat", "title": "Kafka Consumer Lag", "datasource": "Prometheus", "targets": [{"expr": "kafka_consumer_lag", "legendFormat": "lag"}]},
+    {"type": "stat", "title": "Kafka Producer Rate", "datasource": "Prometheus", "targets": [{"expr": "rate(kafka_producer_total[1m])", "legendFormat": "producer_rate"}]},
+    {"type": "stat", "title": "Kafka Consumer Rate", "datasource": "Prometheus", "targets": [{"expr": "rate(kafka_consumer_total[1m])", "legendFormat": "consumer_rate"}]},
+    {"type": "graph", "title": "DLQ Count", "datasource": "Prometheus", "targets": [{"expr": "dlq_count", "legendFormat": "dlq_count"}]})
+  ]
+}

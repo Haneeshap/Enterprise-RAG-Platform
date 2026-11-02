@@ -1,0 +1,11 @@
+{
+  "title": "RAG Cache",
+  "type": "dashboard",
+  "tags": ["rag", "cache"],
+  "panels": [
+    {"type": "stat", "title": "Cache Hit Rate", "datasource": "Prometheus", "targets": [{"expr": "cache_hit_rate", "legendFormat": "hit_rate"}]},
+    {"type": "stat", "title": "Cache Misses", "datasource": "Prometheus", "targets": [{"expr": "cache_miss_total"}]},
+    {"type": "graph", "title": "Cache Latency", "datasource": "Prometheus", "targets": [{"expr": "cache_latency_seconds_bucket"}]},
+    {"type": "stat", "title": "Docs Cached", "datasource": "Prometheus", "targets": [{"expr": "doc_cached_count"}]})
+  ]
+}

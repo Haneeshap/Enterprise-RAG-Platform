@@ -1,0 +1,10 @@
+{
+  "title": "RAG Overview",
+  "type": "dashboard",
+  "tags": ["rag", "overview"],
+  "panels": [
+    {"type": "stat", "title": "Total Documents", "datasource": "Prometheus", "targets": [{"expr": "doc_total_count"}]},
+    {"type": "stat", "title": "Active Tenants", "datasource": "Prometheus", "targets": [{"expr": "count by (tenant_id) (app_total_queries)"}]},
+    {"type": "graph", "title": "Request Rate", "datasource": "Prometheus", "targets": [{"expr": "rate(http_requests_total[1m])"}])
+  ]
+}

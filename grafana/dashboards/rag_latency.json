@@ -1,0 +1,10 @@
+{
+  "title": "RAG Latency",
+  "type": "dashboard",
+  "tags": ["rag", "latency"],
+  "panels": [
+    {"type": "histogram", "title": "Request Duration", "datasource": "Prometheus", "targets": [{"expr": "request_duration_seconds_bucket", "legendFormat": "{{le}}"}]},
+    {"type": "stat", "title": "Avg Latency", "datasource": "Prometheus", "targets": [{"expr": "avg(request_duration_seconds)"}]},
+    {"type": "graph", "title": "TTFB", "datasource": "Prometheus", "targets": [{"expr": "frontend_ttfb_seconds_bucket"}])}
+  ]
+}
